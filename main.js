@@ -192,10 +192,6 @@ class PluginManagerSettingTab extends obsidian.PluginSettingTab {
         if (manifest.helpUrl && manifest.helpUrl.includes("github.com")) {
             return manifest.helpUrl;
         }
-        // Check fundingUrl
-        if (manifest.fundingUrl && manifest.fundingUrl.includes("github.com")) {
-            return manifest.fundingUrl;
-        }
         return null;
     }
 }
