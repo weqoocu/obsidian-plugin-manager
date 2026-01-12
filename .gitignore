@@ -1,0 +1,16 @@
+# Node
+node_modules/
+
+# Build
+*.map
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Obsidian
+data.json

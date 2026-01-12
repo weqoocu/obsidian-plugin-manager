@@ -1,0 +1,10 @@
+{
+	"id": "obsidian-plugin-manager",
+	"name": "Plugin Manager",
+	"version": "1.0.5",
+	"minAppVersion": "1.0.0",
+	"description": "Manage your enabled plugins - search, refresh, and open plugin folders.",
+	"author": "酷口家数字花园",
+	"authorUrl": "https://weqoocu.com",
+	"isDesktopOnly": true
+}
