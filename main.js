@@ -301,21 +301,33 @@ class PluginManagerPlugin extends obsidian.Plugin {
 
     // Open plugin folder in system file explorer
     async openPluginFolder(pluginId) {
-        const { plugins, vault } = this.app;
-        const pluginFolder = `${vault.configDir}/plugins/${pluginId}`;
-        const absolutePath = obsidian.normalizePath(pluginFolder);
+        const { vault, plugins } = this.app;
         
         try {
-            // Use Obsidian's native method to open folder
-            // @ts-ignore - Using internal API
-            if (this.app.openWithDefaultApp) {
-                await this.app.openWithDefaultApp(absolutePath);
+            // Get actual folder name from plugin's dir property
+            let folderName = pluginId;
+            const plugin = plugins.plugins[pluginId];
+            if (plugin && plugin.manifest && plugin.manifest.dir) {
+                // manifest.dir contains the actual folder path like ".obsidian/plugins/folder-name"
+                const dirParts = plugin.manifest.dir.split("/");
+                folderName = dirParts[dirParts.length - 1];
+            }
+            
+            const pluginFolder = `${vault.configDir}/plugins/${folderName}`;
+            const basePath = vault.adapter.basePath;
+            const fullPath = `${basePath}/${pluginFolder}`;
+            
+            // Use Electron shell to open folder
+            const { shell } = require("electron").remote || require("@electron/remote") || require("electron");
+            if (shell && shell.openPath) {
+                await shell.openPath(fullPath);
+            } else if (shell && shell.showItemInFolder) {
+                shell.showItemInFolder(fullPath);
             } else {
-                // Fallback: use shell to open folder
-                const { shell } = require("electron").remote || require("@electron/remote") || {};
-                if (shell) {
-                    const fullPath = `${vault.adapter.basePath}/${pluginFolder}`;
-                    shell.openPath(fullPath);
+                // Fallback: use Obsidian's method
+                // @ts-ignore
+                if (this.app.showInFolder) {
+                    await this.app.showInFolder(fullPath);
                 } else {
                     new obsidian.Notice("Unable to open folder on this platform");
                 }
